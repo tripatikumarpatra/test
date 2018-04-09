@@ -41,7 +41,6 @@
       dest: "{{ folderpath }}/etc/nmprc"
   - name: "moving folderpath into /opt"
     command: "cp -rf {{ folderpath }} /opt"
-
   - name: create symbolic link
     file:
       src: '{{ item.src }}'
