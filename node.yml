@@ -53,3 +53,9 @@
     copy: 
       src: "/home/ansible/nodejs/test/hello.js"
       dest: "{{ folderpath }}/hello.js"
+  - name: Install pm2
+    npm:
+      name: pm2
+      global: yes
+  - name: "Start node js app"
+    command: "pm2 start {{ folderpath }}/hello.js"
