@@ -1,2 +1,5 @@
 [app]
 ip-172-31-20-178.us-west-2.compute.internal
+
+[web]
+ip-172-31-19-255.us-west-2.compute.internal

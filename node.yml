@@ -1,13 +1,16 @@
 ---
+- hosts: all
+  become: yes
+  tasks:
+  - name: check update
+    apt:
+      update_cache: yes
 - hosts: app
   become: yes
   vars:
     folderpath: /home/ansible/node
     appprivate_ip: 172.31.20.178
   tasks:
-  - name: check update
-    apt:
-      update_cache: yes
   - name: install git
     apt:
       name: git
@@ -59,3 +62,24 @@
       global: yes
   - name: "Start node js app"
     command: "pm2 start {{ folderpath }}/hello.js"
+
+- hosts: web
+  become: yes
+  vars:
+    webserver_dns_name: "ip-172-31-19-255.us-west-2.compute.internal"
+    appserver_ip: 34.211.135.177
+  tasks:
+  - name: install nginx
+    apt:
+      name: nginx
+      state: present
+  - name: copy default file to web server
+    template:
+      src: default.j2
+      dest: /etc/nginx/sites-available/default
+    notify: restart nginx
+  handlers:
+   - name: restart nxinx
+     service:
+      name: nginx
+      state: restarted 
