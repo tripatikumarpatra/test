@@ -1,0 +1,56 @@
+---
+- hosts: app
+  become: yes
+  vars:
+    folderpath: /home/ansible/node
+    appprivate_ip: 172.31.20.178
+  tasks:
+  - name: check update
+    apt:
+      update_cache: yes
+  - name: install git
+    apt:
+      name: git
+      state: present
+  - name: download the nodejs tar
+    command: "wget https://nodejs.org/dist/v4.2.3/node-v4.2.3-linux-x64.tar.gz"
+  - name: creating a directory
+    file:
+      path: "{{ folderpath }}"
+      state: directory
+  - name: Extract the tar into folderpath
+    unarchive:
+      src: /home/ansible/node-v4.2.3-linux-x64.tar.gz
+      dest: "{{ folderpath }}"
+      remote_src: yes
+  - name: delete nodejs tar 
+    file:
+      path: "{{ folderpath }}/node-v4.2.3-linux-x64.tar.gz"
+      state: absent
+  - name: creating folder for prefix
+    file:
+      path: "{{ folderpath }}/etc"
+      state: directory
+  - name: create file
+    file:
+      path: "{{ folderpath }}/etc/nmprc"
+      state: touch
+  - name: copy the content
+    copy:
+      content: "prefix=/usr/local"
+      dest: "{{ folderpath }}/etc/nmprc"
+  - name: "moving folderpath into /opt"
+    command: "cp -rf {{ folderpath }} /opt"
+
+  - name: create symbolic link
+    file:
+      src: '{{ item.src }}'
+      dest: '{{ item.dest }}'
+      state: link
+    loop:
+      - { src: '/opt/node/node-v4.2.3-linux-x64/bin/node', dest: '/usr/local/bin/node' }
+      - { src: '/opt/node/node-v4.2.3-linux-x64/bin/npm', dest: '/usr/local/bin/npm' }
+  - name: copy hello.js
+    file: 
+      src: "nodejs/hello.js"
+      dest: "{{ folderpath }}/hello.js"
