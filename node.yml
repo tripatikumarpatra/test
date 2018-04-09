@@ -41,7 +41,6 @@
       dest: "{{ folderpath }}/etc/nmprc"
   - name: "moving folderpath into /opt"
     command: "cp -rf {{ folderpath }} /opt"
-
   - name: create symbolic link
     file:
       src: '{{ item.src }}'
@@ -51,6 +50,6 @@
       - { src: '/opt/node/node-v4.2.3-linux-x64/bin/node', dest: '/usr/local/bin/node' }
       - { src: '/opt/node/node-v4.2.3-linux-x64/bin/npm', dest: '/usr/local/bin/npm' }
   - name: copy hello.js
-    file: 
-      src: "nodejs/hello.js"
+    copy: 
+      src: "/home/ansible/nodejs/test/hello.js"
       dest: "{{ folderpath }}/hello.js"
